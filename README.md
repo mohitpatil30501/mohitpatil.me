@@ -30,4 +30,4 @@ open index.html
 🌐 [mohitpatil.me](https://mohitpatil.me)
 
 ---
-📧 **Contact**: [mohitpatil.official30501@gmail.com](mailto:mohitpatil.official30501@gmail.com)
+📧 **Contact**: [mohitpatil30501@gmail.com](mailto:mohitpatil30501@gmail.com)

@@ -1,86 +1,54 @@
-# Security Configuration for mohitpatil.me
-# Restrict access to all files except index.html and essential assets
+# ----------------------------------------------------------------------
+# Remove .html and .php extensions from URLs
+# ----------------------------------------------------------------------
 
-# Deny access to all files by default
-<Files "*">
-    Order Deny,Allow
-    Deny from all
-</Files>
+RewriteEngine On
+RewriteBase /
 
-# Allow access to index.html (main page)
-<Files "index.html">
-    Order Allow,Deny
-    Allow from all
-</Files>
+# Serve index.html or index.php by default
+DirectoryIndex index.php index.html
 
-# Allow access to CSS files
-<FilesMatch "\.(css)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
+# Remove .html extension
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/]+)/?$ $1.html [L]
 
-# Allow access to JavaScript files
-<FilesMatch "\.(js)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
+# Remove .php extension (optional, only if you use PHP)
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^/]+)/?$ $1.php [L]
 
-# Allow access to image files
-<FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
+# If file or directory doesn't exist, show custom 404 page (optional)
+ErrorDocument 404 /404.html
 
-# Allow access to font files
-<FilesMatch "\.(woff|woff2|ttf|eot)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
+# ----------------------------------------------------------------------
+# Security Headers
+# ----------------------------------------------------------------------
 
-# Redirect root directory to index.html
-DirectoryIndex index.html
+# Prevent MIME-type sniffing
+Header set X-Content-Type-Options "nosniff"
 
-# Prevent directory browsing
+# Prevent clickjacking
+Header always append X-Frame-Options SAMEORIGIN
+
+# Enable XSS protection
+Header set X-XSS-Protection "1; mode=block"
+
+# Disable server signature
+ServerSignature Off
+
+# ----------------------------------------------------------------------
+# Disable directory listing
+# ----------------------------------------------------------------------
+
 Options -Indexes
 
-# Hide sensitive files
-<Files ".htaccess">
-    Order Allow,Deny
-    Deny from all
-</Files>
+# ----------------------------------------------------------------------
+# Restrict access to sensitive files
+# ----------------------------------------------------------------------
 
-<Files "*.md">
-    Order Allow,Deny
-    Deny from all
-</Files>
+<FilesMatch "^\.ht">
+  Require all denied
+</FilesMatch>
 
-<Files "*.txt">
-    Order Allow,Deny
-    Deny from all
-</Files>
-
-# Security headers
-<IfModule mod_headers.c>
-    Header always set X-Content-Type-Options nosniff
-    Header always set X-Frame-Options DENY
-    Header always set X-XSS-Protection "1; mode=block"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-</IfModule>
-
-# Enable GZIP compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-</IfModule>
-
-# Set cache headers for static assets
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/ico "access plus 1 year"
-</IfModule>
+<FilesMatch "(^#.*#|\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp)|~)$">
+  Require all denied
+</FilesMatch>

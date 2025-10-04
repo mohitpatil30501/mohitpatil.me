@@ -1,0 +1,86 @@
+# Security Configuration for mohitpatil.me
+# Restrict access to all files except index.html and essential assets
+
+# Deny access to all files by default
+<Files "*">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Allow access to index.html (main page)
+<Files "index.html">
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+# Allow access to CSS files
+<FilesMatch "\.(css)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Allow access to JavaScript files
+<FilesMatch "\.(js)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Allow access to image files
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Allow access to font files
+<FilesMatch "\.(woff|woff2|ttf|eot)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Redirect root directory to index.html
+DirectoryIndex index.html
+
+# Prevent directory browsing
+Options -Indexes
+
+# Hide sensitive files
+<Files ".htaccess">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "*.md">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "*.txt">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Set cache headers for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/ico "access plus 1 year"
+</IfModule>
